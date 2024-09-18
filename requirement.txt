@@ -1,0 +1,4 @@
+pip install python-telegram-bot
+pip install apscheduler
+pip install matplotlib
+pip install sqlite3
