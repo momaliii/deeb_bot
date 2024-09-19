@@ -69,7 +69,7 @@ async def handle_message(update: Update, context):
             c.execute('SELECT SUM(amount) FROM transactions WHERE chat_id = ?', (chat_id,))
             total = c.fetchone()[0]
 
-            await update.message.reply_text(f"Amount added: {amount}\nYour current total: {total}")
+            await update.message.reply_text(f"Amount added: {amount}\nTotal: {total}")
         except ValueError:
             pass
     else:
