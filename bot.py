@@ -221,7 +221,7 @@ async def start(update: Update, context):
 
 def main():
     # Create the application
-    application = Application.builder().token('YOUR_API').build()
+    application = Application.builder().token('7457442840:AAG5ioBPW415GnIasz5oWPmDrDphGunImoY').build()
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
