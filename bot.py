@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from telegram.constants import ParseMode  # Import ParseMode for formatting
 
 # Connect to the SQLite database
 conn = sqlite3.connect('transactions.db')
@@ -155,7 +156,7 @@ async def reset_transactions(update: Update, context):
     conn.commit()
     await update.message.reply_text("All your transactions have been reset.")
 
-# Broadcast message to all users and send a summary report
+# Broadcast message to all users with Markdown formatting support
 async def broadcast_message(update: Update, context):
     if context.args:
         message = " ".join(context.args)
@@ -163,7 +164,8 @@ async def broadcast_message(update: Update, context):
         failed_count = 0
         for user in users:
             try:
-                await context.bot.send_message(chat_id=user[0], text=message)
+                # Send message with Markdown formatting
+                await context.bot.send_message(chat_id=user[0], text=message, parse_mode=ParseMode.MARKDOWN)
             except Exception as e:
                 failed_count += 1  # Track failed deliveries
 
@@ -217,11 +219,11 @@ async def helpme(update: Update, context):
 
 # Start command handler
 async def start(update: Update, context):
-    await update.message.reply_text("Welcome! Send me a number with + or -, and I'll track it for this chat.if u need any help just type /helpme")
+    await update.message.reply_text("Welcome! Send me a number with + or -, and I'll track it for this chat. If you need any help, just type /helpme")
 
 def main():
     # Create the application
-    application = Application.builder().token('7457442840:AAG5ioBPW415GnIasz5oWPmDrDphGunImoY').build()
+    application = Application.builder().token('YOUR_BOT_TOKEN').build()
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
