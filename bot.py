@@ -69,7 +69,7 @@ async def handle_message(update: Update, context):
             c.execute('SELECT SUM(amount) FROM transactions WHERE chat_id = ?', (chat_id,))
             total = c.fetchone()[0]
 
-            await update.message.reply_text(f"Amount added: {amount}\nTotal: {total}")
+            await update.message.reply_text(f"Amount added: {amount}\nYour current total: {total}")
         except ValueError:
             pass
     else:
@@ -156,19 +156,31 @@ async def reset_transactions(update: Update, context):
     conn.commit()
     await update.message.reply_text("All your transactions have been reset.")
 
-# Broadcast message to all users with Markdown formatting support
+# Broadcast message to all users with Markdown formatting support and proper line breaks
 async def broadcast_message(update: Update, context):
     if context.args:
         message = " ".join(context.args)
+        
+        # Ensure proper line breaks (if needed, ensure you include "\n" in your messages)
+        message = message.replace("\\n", "\n")  # This handles cases where "\n" is in the text input
+        
+        # Telegram message limit is 4096 characters; we need to split if the message exceeds that
+        MAX_MESSAGE_LENGTH = 4096
+        
         users = c.execute("SELECT chat_id FROM users").fetchall()
         failed_count = 0
+        
+        # Split the message if it's too long
+        message_chunks = [message[i:i + MAX_MESSAGE_LENGTH] for i in range(0, len(message), MAX_MESSAGE_LENGTH)]
+        
         for user in users:
-            try:
-                # Send message with Markdown formatting
-                await context.bot.send_message(chat_id=user[0], text=message, parse_mode=ParseMode.MARKDOWN)
-            except Exception as e:
-                failed_count += 1  # Track failed deliveries
-
+            for chunk in message_chunks:
+                try:
+                    # Send each chunk of the message with Markdown formatting
+                    await context.bot.send_message(chat_id=user[0], text=chunk, parse_mode=ParseMode.MARKDOWN)
+                except Exception as e:
+                    failed_count += 1  # Track failed deliveries
+        
         success_count = len(users) - failed_count
         await update.message.reply_text(f"Broadcast sent to {success_count} users.\nFailed to send to {failed_count} users.")
     else:
