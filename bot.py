@@ -223,7 +223,7 @@ async def helpme(update: Update, context):
         "/export - Export your transactions as a CSV file\n"
         "/graph - Get a graphical report of your transactions\n"
         "/reset - Reset all your transactions\n"
-        "/broadcast [message] - Send a broadcast message (admin only)\n"
+        "/broadcast [message] - Send a broadcast message (admin only) use** to make word bold. use \ n to make line\n"
         "/summary - Get a summary of all transactions across all chats\n"
         "/helpme - Display this help message"
     )
